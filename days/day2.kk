@@ -35,36 +35,36 @@ fun int(status: rps-status): int
 
 pub fun parse-rps(): <parse | e> rps
   fun rock() {
-    with return(x) Rock
     one-of("AX")
+    Rock
   }
 
   fun paper() {
-    with return(x) Paper
     one-of("BY")
+    Paper
   }
 
   fun scissors() {
-    with return(x) Scissors
     one-of("CZ")
+    Scissors
   }
 
   [rock, paper, scissors].choose
 
 fun parse-rps-status(): <parse | e> rps-status
   fun loss() {
-    with return(x) Loss
     char('X')
+    Loss
   }
 
   fun draw() {
-    with return(x) Draw
     char('Y')
+    Draw
   }
 
   fun win() {
-    with return(x) Win
     char('Z')
+    Win
   }
 
   [loss, draw, win].choose

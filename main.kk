@@ -10,6 +10,8 @@ pub fun main()
   println("Enter a day number to execute:")
   val day  = readline().parse-int-default(0)
 
+  println("")
+
   println("Enter a part number to execute:")
   val part = readline().parse-int-default(0)
 
