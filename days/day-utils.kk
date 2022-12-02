@@ -1,5 +1,7 @@
 module day-utils
 
+import std/text/parse
+
 // Generalised quicksort.
 pub fun qsort(xxs: list<a>, compare: (a, a) -> order): div list<a>
   match xxs

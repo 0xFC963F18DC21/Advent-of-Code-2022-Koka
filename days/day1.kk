@@ -10,15 +10,15 @@ alias elf = list<int>
 fun parse-elf(): <parse | e> elf
   val foods = many
     val food = pint()
+    with return(x) food
     pstring("\n")
-    food
+  with return(x) foods
   pstring("\n")
-  foods
 
 fun get-elves(input: string): list<elf>
   input.slice.parse {
-    many
-      parse-elf()
+    with many
+    parse-elf()
   }.maybe.default([])
 
 pub fun day1(part: int): io ()
