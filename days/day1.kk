@@ -3,6 +3,7 @@ module day1
 import std/text/parse
 
 import utils/input
+import utils/ord
 import utils/qsort
 
 alias elf = list<int>
@@ -22,7 +23,9 @@ fun get-elves(input: string): list<elf>
   }.maybe.default([])
 
 pub fun day1(part: int): io ()
-  val elves = get-elves(get-input(1)).map(sum).qsort((compare: (int, int) -> order).flip)
+  with fun cmp(l: int, r: int) r.compare(l)
+
+  val elves = get-elves(get-input(1)).map(sum).qsort
   match part
     1 -> elves.head(0).show.println
     2 -> elves.take(3).sum.show.println

@@ -1,21 +1,17 @@
 module qsort
 
+import ord
+
 // Generalised quicksort.
-pub fun qsort(xxs: list<a>, compare: (a, a) -> order): div list<a>
+pub fun qsort-explicit(xxs: list<a>, compare: (a, a) -> order): div list<a>
+  with fun cmp(l, r) compare(l, r)
+  qsort(xxs)
+
+// Quicksort for types that implement ord with a handler.
+pub fun qsort(xxs: list<a>): <div, ord<a>> list<a>
   match xxs
     Nil          -> Nil
     Cons(x, Nil) -> Cons(x, Nil)
     Cons(x, xs)  ->
-      fun leq-x(y): bool
-        match y.compare(x)
-          Eq -> True
-          Lt -> True
-          Gt -> False
-
-      match xs.partition(leq-x)
-        (lts, gts) -> lts.qsort(compare) ++ [x] ++ gts.qsort(compare)
-
-// Flip the order of arguments in a 2-ary function.
-pub fun flip(f)
-  fn (b, a)
-    f(a, b)
+      match xs.partition(fn (y) { y < x })
+        (lts, gts) -> lts.qsort ++ [x] ++ gts.qsort

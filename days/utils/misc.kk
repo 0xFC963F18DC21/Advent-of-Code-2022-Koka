@@ -15,3 +15,8 @@ pub fun partition-n(xxs: list<a>, gsize: int): pure list<list<a>>
         else ys.part(Cons(y, acc), counter - 1)
 
   xxs.part(Nil, gsize)
+
+// Flip the order of arguments in a 2-ary function.
+pub fun flip(f)
+  fn (b, a)
+    f(a, b)
