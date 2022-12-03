@@ -3,7 +3,7 @@ module qsort
 import ord
 
 // Generalised quicksort.
-pub fun qsort-explicit(xxs: list<a>, compare: (a, a) -> order): div list<a>
+pub fun qsort(xxs: list<a>, compare: (a, a) -> order): div list<a>
   with fun cmp(l, r) compare(l, r)
   qsort(xxs)
 
