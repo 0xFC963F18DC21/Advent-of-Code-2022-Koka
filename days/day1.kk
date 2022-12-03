@@ -2,8 +2,8 @@ module day1
 
 import std/text/parse
 
-import day-input
-import day-utils
+import utils/input
+import utils/qsort
 
 alias elf = list<int>
 

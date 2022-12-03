@@ -1,8 +1,12 @@
-module day-input
+module input
 
 import std/os/file
 import std/os/path
-import std/text/parse
+
+pub fun to-list-char(slice: sslice): pure list<char>
+  match slice.next
+    Nothing       -> Nil
+    Just((c, cs)) -> Cons(c, cs.to-list-char)
 
 pub fun get-input(day: int): <exn, fsys> string
   read-text-file(("./inputs/day" ++ day.show ++ ".txt").path)

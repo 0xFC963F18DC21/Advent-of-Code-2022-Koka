@@ -2,7 +2,7 @@ module day2
 
 import std/text/parse
 
-import day-input
+import utils/input
 
 type rps
   Rock
