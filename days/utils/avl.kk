@@ -48,7 +48,7 @@ fun avl-balance(z: avlzipper<a, b>, l: avltree<a, b>, k: a, v: b, r: avltree<a, 
         // Balanced, or left-heavy one-level up.
         zr.avl-balance(l_, k_, v_, hnode(l, k, v, r))
 
-fun avl-ins(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> order, z: avlzipper<a, b>): avltree<a, b>
+fun avl-ins(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> e order, z: avlzipper<a, b>): e avltree<a, b>
   match t
     HTip              -> z.avl-balance(HTip, key, value, HTip)
     HNode(_, l, k, v, r) ->
@@ -56,10 +56,10 @@ fun avl-ins(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> order, z: avl
       elif key.compare(k).is-gt then avl-ins(r, key, value, compare, HNodeR(l, k, v, r.height, z))
       else                           z.avl-move-up(hnode(l, k, v, r))
 
-pub fun avl-insert(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> order): avltree<a, b>
+pub fun avl-insert(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> e order): e avltree<a, b>
   avl-ins(t, key, value, compare, Done)
 
-pub fun avl-get(t: avltree<a, b>, key: a, default: b, compare: (a, a) -> order): b
+pub fun avl-get(t: avltree<a, b>, key: a, default: b, compare: (a, a) -> e order): e b
   match t
     HTip                 -> default
     HNode(_, l, k, x, r) -> match key.compare(k)
@@ -72,7 +72,7 @@ fun min-pair(t: avltree<a, b>): exn (a, b)
     HNode(_, HTip, k, v, _) -> (k, v)
     HNode(_, l, _, _)       -> l.min-pair
 
-fun avl-del(t: avltree<a, b>, key: a, compare: (a, a) -> order, z: avlzipper<a, b>): pure avltree<a, b>
+fun avl-del(t: avltree<a, b>, key: a, compare: (a, a) -> <exn | e> order, z: avlzipper<a, b>): <exn | e> avltree<a, b>
   match t
     HTip                 -> z.avl-move-up(HTip)
     HNode(_, l, k, v, r) -> match key.compare(k)
@@ -85,10 +85,10 @@ fun avl-del(t: avltree<a, b>, key: a, compare: (a, a) -> order, z: avlzipper<a, 
         _                                              -> match r.min-pair
           (mk, mv) -> z.avl-balance(l, mk, mv, r.avl-delete(mk, compare))
 
-pub fun avl-delete(t: avltree<a, b>, key: a, compare: (a, a) -> order): pure avltree<a, b>
+pub fun avl-delete(t: avltree<a, b>, key: a, compare: (a, a) -> <exn | e> order): <exn | e> avltree<a, b>
   avl-del(t, key, compare, Done)
 
-pub fun fold(t: avltree<a, b>, acc: c, f: (a, b, c) -> c): c
+pub fun fold(t: avltree<a, b>, acc: c, f: (a, b, c) -> e c): e c
   match t
     HTip                 -> acc
     HNode(_, l, k, v, r) -> r.fold(f(k, v, l.fold(acc, f)), f)
