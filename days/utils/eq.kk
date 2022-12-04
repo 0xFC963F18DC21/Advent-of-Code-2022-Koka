@@ -8,27 +8,31 @@ import ord
 pub effect eq<a>
   fun eq(l: a, r: a): bool
 
-pub fun (==)(l: a, r: a): eq<a> bool
+pub fun (===)(l: a, r: a): eq<a> bool
   l.eq(r)
 
-pub fun (!=)(l: a, r: a): eq<a> bool
+pub fun (!==)(l: a, r: a): eq<a> bool
   !(l.eq(r))
 
 // Some implementations of equatable types:
 pub fun eq-int(action)
-  with fun eq(l: int, r: int) l.compare(r).is-eq
+  with fun eq(l: int, r: int) l == r
+  action()
+
+pub fun eq-float64(action)
+  with fun eq(l: float64, r: float64) l == r
   action()
 
 pub fun eq-char(action)
-  with fun eq(l: char, r: char) l.compare(r).is-eq
+  with fun eq(l: char, r: char) l == r
   action()
 
 pub fun eq-bool(action)
-  with fun eq(l: bool, r: bool) l.compare(r).is-eq
+  with fun eq(l: bool, r: bool) l == r
   action()
 
 pub fun eq-string(action)
-  with fun eq(l: string, r: string) l.compare(r).is-eq
+  with fun eq(l: string, r: string) l == r
   action()
 
 pub fun eq-list(action)
