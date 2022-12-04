@@ -9,17 +9,11 @@ pub effect ord<a>
 pub fun (<)(l: a, r: a): ord<a> bool
   l.cmp(r).is-lt
 
-pub fun (==)(l: a, r: a): ord<a> bool
-  l.cmp(r).is-eq
-
 pub fun (>)(l: a, r: a): ord<a> bool
   l.cmp(r).is-gt
 
 pub fun (<=)(l: a, r: a): ord<a> bool
   !(l > r)
-
-pub fun (!=)(l: a, r: a): ord<a> bool
-  !(l == r)
 
 pub fun (>=)(l: a, r: a): ord<a> bool
   !(l < r)
@@ -52,26 +46,37 @@ pub fun ord-list(action)
       (_, Nil)                   -> Gt
 
   with fun cmp(l, r) lcompare(l, r)
-
   action()
 
 pub fun ord-pair(action)
   with fun cmp(l, r)
     match (l, r)
-      ((ll, lr), (rl, rr)) -> [ll, lr].cmp([rl, rr])
+      ((ll, lr), (rl, rr)) -> match ll.cmp(rl)
+        Eq -> lr.cmp(rr)
+        or -> or
 
   action()
 
 pub fun ord-triple(action)
   with fun cmp(l, r)
     match (l, r)
-      ((l1, l2, l3), (r1, r2, r3)) -> [l1, l2, l3].cmp([r1, r2, r3])
+      ((l1, l2, l3), (r1, r2, r3)) -> match l1.cmp(r1)
+        Eq -> match l2.cmp(r2)
+          Eq -> l3.cmp(r3)
+          or -> or
+        or -> or
 
   action()
 
 pub fun ord-quadruple(action)
   with fun cmp(l, r)
     match (l, r)
-      ((l1, l2, l3, l4), (r1, r2, r3, r4)) -> [l1, l2, l3, l4].cmp([r1, r2, r3, r4])
+      ((l1, l2, l3, l4), (r1, r2, r3, r4)) -> match l1.cmp(r1)
+        Eq -> match l2.cmp(r2)
+          Eq -> match l3.cmp(r3)
+            Eq -> l4.cmp(r4)
+            or -> or
+          or -> or
+        or -> or
 
   action()
