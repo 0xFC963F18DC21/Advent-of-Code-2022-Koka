@@ -1,5 +1,7 @@
 module ord
 
+import misc
+
 // The effect of orderable types.
 // They should define a cmp function that takes two inputs of the same type,
 // and return an ordering information (Lt, Eq, Gt) for that relation.
@@ -21,6 +23,10 @@ pub fun (>=)(l: a, r: a): ord<a> bool
 // Some implementations of ordered types:
 pub fun ord-int(action)
   with fun cmp(l: int, r: int) l.compare(r)
+  action()
+
+pub fun ord-float64(action)
+  with fun cmp(l: float64, r: float64) l.compare(r)
   action()
 
 pub fun ord-char(action)

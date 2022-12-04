@@ -27,3 +27,9 @@ pub fun count(xs: list<a>, pred: a -> e bool): e int
     if   pred(x)
     then acc + 1
     else acc
+
+// Compare implementation for float64.
+pub fun compare(l: float64, r: float64): order
+  if   l < r then Lt
+  elif l > r then Gt
+  else            Eq
