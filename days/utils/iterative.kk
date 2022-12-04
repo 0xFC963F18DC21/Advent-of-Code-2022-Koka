@@ -33,8 +33,7 @@ pub fun iwhile(
 ): <div, iterative | e> ()
   with override
     ctl break() ()
-    ctl continue()
-      while-internal(cond, action)
+    ctl continue() iwhile(cond, action)
 
   while-internal(cond, action)
 
@@ -49,9 +48,7 @@ pub fun ifor(
 ): <div, iterative | e> ()
   with override
     ctl break() ()
-    ctl continue()
-      post()
-      for-internal(cond, post, action)
+    ctl continue() ifor(post, cond, post, action)
     // No, the above is not a typo.
     // A continue invocation should invoke the post-action before the condition runs
     // All languages with a for construct like this (C, C++, Java, etc...) do that.
@@ -108,7 +105,7 @@ fun label-while(
       else label-break(to-label)
     ctl label-continue(to-label)
       if   label == to-label
-      then label-while-internal(cond, action)
+      then label-while(label, cond, action)
       else label-continue(to-label)
 
   if   label == ""
@@ -133,12 +130,14 @@ fun label-for(
       else label-break(to-label)
     ctl label-continue(to-label)
       if   label == to-label
-      then label-for-internal(cond, post, action)
+      then label-for(label, post, cond, post, action)
       else label-continue(to-label)
+      // See the note in ifor.
 
   if   label == ""
   then throw("Label cannot be empty!")
 
+  pre()
   label-for-internal(cond, post, action)
 
 // Declare a top-level body that deals with labelled loops.
@@ -150,25 +149,3 @@ pub fun label-loop(body: () -> <pure, label-iterative | e> ()): <pure | e> ()
       throw("Invalid label: " ++ to-label)
 
   body()
-
-pub fun test-label-while() {
-  with loop
-  with label-loop
-
-  var x := True
-  var y := 0
-
-  label-while("outer") { x } {
-    iwhile { True } {
-      label-for("inner") { y := 0 } { y < 10 } { y := y + 1 } {
-        println(y)
-
-        if   y == 6
-        then
-          x := False
-          println("SET FALSE")
-          break()
-      }
-    }
-  }
-}
