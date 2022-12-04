@@ -4,6 +4,8 @@ import std/os/readline
 
 import days/day1
 import days/day2
+import days/day3
+import days/day4
 
 // The runner file for the day solutions.
 pub fun main()
@@ -20,4 +22,6 @@ pub fun main()
   match day
     1 -> day1(part)
     2 -> day2(part)
+    3 -> day3(part)
+    4 -> day4(part)
     _ -> println("Nothing to report on this day...")
