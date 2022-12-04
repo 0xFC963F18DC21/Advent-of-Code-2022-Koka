@@ -20,3 +20,10 @@ pub fun partition-n(xxs: list<a>, gsize: int): pure list<list<a>>
 pub fun flip(f)
   fn (b, a)
     f(a, b)
+
+// Count the number of elements in a list satisfying some predicate.
+pub fun count(xs: list<a>, pred: a -> e bool): e int
+  xs.foldl(0) fn (acc, x)
+    if   pred(x)
+    then acc + 1
+    else acc
