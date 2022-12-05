@@ -15,12 +15,12 @@ fun hnode(l: avltree<a, b>, k: a, v: b, r: avltree<a, b>): avltree<a, b>
 
 // Copied pattern from the rbtree-fbip example.
 // The zipper pattern allows Koka to do things IN-PLACE.
-type avlzipper<a, b>
+pub type avlzipper<a, b>
   Done
   HNodeL(zip: avlzipper<a, b>, h: int, key: a, value: b, r: avltree<a, b>)
   HNodeR(l: avltree<a, b>, key: a, value: b, h: int, zip: avlzipper<a, b>)
 
-fun avl-move-up(z: avlzipper<a, b>, t: avltree<a, b>): avltree<a, b>
+pub fun avl-move-up(z: avlzipper<a, b>, t: avltree<a, b>): avltree<a, b>
   match z
     Done                -> t
     HNodeL(zl, _, k, v, r) -> zl.avl-move-up(hnode(t, k, v, r))
@@ -48,16 +48,27 @@ fun avl-balance(z: avlzipper<a, b>, l: avltree<a, b>, k: a, v: b, r: avltree<a, 
         // Balanced, or left-heavy one-level up.
         zr.avl-balance(l_, k_, v_, hnode(l, k, v, r))
 
-fun avl-ins(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> e order, z: avlzipper<a, b>): e avltree<a, b>
+fun avl-ins(
+  t: avltree<a, b>,
+  key: a, value: b,
+  compare: (a, a) -> e order,
+  z: avlzipper<a, b>,
+  replace: bool
+): e avltree<a, b>
   match t
     HTip              -> z.avl-balance(HTip, key, value, HTip)
     HNode(_, l, k, v, r) ->
-      if   key.compare(k).is-lt then avl-ins(l, key, value, compare, HNodeL(z, l.height, k, v, r))
-      elif key.compare(k).is-gt then avl-ins(r, key, value, compare, HNodeR(l, k, v, r.height, z))
-      else                           z.avl-move-up(hnode(l, k, v, r))
+      if   key.compare(k).is-lt then avl-ins(l, key, value, compare, HNodeL(z, l.height, k, v, r), replace)
+      elif key.compare(k).is-gt then avl-ins(r, key, value, compare, HNodeR(l, k, v, r.height, z), replace)
+      else                           z.avl-move-up(hnode(l, k, if replace then value else v, r))
 
-pub fun avl-insert(t: avltree<a, b>, key: a, value: b, compare: (a, a) -> e order): e avltree<a, b>
-  avl-ins(t, key, value, compare, Done)
+pub fun avl-insert(
+  t: avltree<a, b>,
+  key: a, value: b,
+  compare: (a, a) -> e order,
+  replace: bool = False
+): e avltree<a, b>
+  avl-ins(t, key, value, compare, Done, replace)
 
 pub fun avl-get(t: avltree<a, b>, key: a, default: b, compare: (a, a) -> e order): e b
   match t

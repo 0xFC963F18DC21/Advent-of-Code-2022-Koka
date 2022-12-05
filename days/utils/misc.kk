@@ -16,6 +16,42 @@ pub fun partition-n(xxs: list<a>, gsize: int): pure list<list<a>>
 
   xxs.part(Nil, gsize)
 
+pub fun split-at-first(xxs: list<a>, pred: a -> <pure | e> bool): <pure | e> (list<a>, list<a>)
+  fun spl(xs, acc)
+    match xs
+      Nil         -> (acc.reverse, Nil)
+      Cons(y, ys) ->
+        if   pred(y)
+        then (acc.reverse, ys)
+        else ys.spl(Cons(y, acc))
+
+  xxs.spl(Nil)
+
+// Combine effectful computations.
+pub fun (<~>)(l: () -> e a, r: () -> e b): e (a, b)
+  val lv = l()
+  val rv = r()
+  (lv, rv)
+
+// Transposes a list of lists.
+// Shorter lists can have their elements skipped if you're not careful.
+pub fun transpose(xxs: list<list<a>>): pure list<list<a>>
+  fun decomp(xss)
+    xss.filter-map fn (xs) {
+      match xs
+        Nil          -> Nothing
+        Cons(hd, tl) -> Just((hd, tl))
+    }.unzip
+
+  fun comb(y, h, ys, t)
+    Cons(Cons(y, h), Cons(ys, t).transpose)
+
+  match xxs
+    Nil                    -> Nil
+    Cons(Nil, xss)         -> xss.transpose
+    Cons(Cons(x, xs), xss) -> match decomp(xss)
+      (hds, tls) -> comb(x, hds, xs, tls)
+
 // Flip the order of arguments in a 2-ary function.
 pub fun flip(f)
   fn (b, a)
