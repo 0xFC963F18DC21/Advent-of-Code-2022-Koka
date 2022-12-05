@@ -62,7 +62,7 @@ module iterative
  * nest both kinds of loops into each other, and their control flow functions act
  * exactly how you'd expect it to.
  *
- *  pub fun test-label-while() {
+ *  pub fun test-both-loops() {
  *    with loop
  *    with label-loop
  *  
