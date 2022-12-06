@@ -7,6 +7,7 @@ import days/day2
 import days/day3
 import days/day4
 import days/day5
+import days/day6
 
 // The runner file for the day solutions.
 pub fun main()
@@ -26,4 +27,5 @@ pub fun main()
     3 -> day3(part)
     4 -> day4(part)
     5 -> day5(part)
+    6 -> day6(part)
     _ -> println("Nothing to report on this day...")

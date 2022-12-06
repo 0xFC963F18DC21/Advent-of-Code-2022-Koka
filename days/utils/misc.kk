@@ -27,6 +27,15 @@ pub fun split-at-first(xxs: list<a>, pred: a -> <pure | e> bool): <pure | e> (li
 
   xxs.spl(Nil)
 
+// Find all n-length substrings of a strings.
+pub fun substring-n(str: string, len: int): pure list<string>
+  fun sbn(sl: sslice)
+    if   sl.count == len
+    then Cons(sl.string, sl.advance(1).sbn)
+    else Nil
+
+  str.first(len).sbn
+
 // Combine effectful computations.
 pub fun (<~>)(l: () -> e a, r: () -> e b): e (a, b)
   val lv = l()

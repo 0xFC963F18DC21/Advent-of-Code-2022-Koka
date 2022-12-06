@@ -147,7 +147,7 @@ pub fun ifor(
   for-internal(cond, post, action)
 
 // Declare a top-level body that deals with loops.
-pub fun loop(body: () -> <pure, iterative | e> ()): <pure | e> ()
+pub fun loop(body: () -> <pure, iterative | e> a): <pure | e> a
   with handler
     ctl break()
       throw("Do not do a top-level break!")
@@ -231,7 +231,7 @@ fun label-for(
   label-for-internal(cond, post, action)
 
 // Declare a top-level body that deals with labelled loops.
-pub fun label-loop(body: () -> <pure, label-iterative | e> ()): <pure | e> ()
+pub fun label-loop(body: () -> <pure, label-iterative | e> a): <pure | e> a
   with handler
     ctl label-break(to-label)
       throw("Invalid label: " ++ to-label)
