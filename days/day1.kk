@@ -4,7 +4,7 @@ import std/text/parse
 
 import utils/input
 import utils/ord
-import utils/qsort
+import utils/ordlist
 
 alias elf = list<int>
 

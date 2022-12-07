@@ -4,7 +4,7 @@ import std/text/parse
 
 import utils/input
 import utils/ord
-import utils/qsort
+import utils/ordlist
 
 type fstree
   Dir(name: string, contents: list<fstree>)
@@ -14,6 +14,25 @@ fun size(tree: fstree): pure int
   match tree
     Dir(_, contents)  -> contents.foldl(0) fn (acc, f) { acc + f.size }
     File(_, filesize) -> filesize
+
+type fszipper
+  Done
+  DirZ(z: fszipper, name: string, contents: list<fstree>)
+
+fun fs-up(zip: fszipper, t: fstree): pure (fszipper, fstree)
+  match zip
+    Done          -> (Done, t)
+    DirZ(z, n, c) -> (z, Dir(n, Cons(t, c)))
+
+fun fs-top(zip: fszipper, t: fstree): pure fstree
+  match zip
+    Done          -> t
+    DirZ(z, n, c) -> z.fs-top(Dir(n, Cons(t, c)))
+
+fun fs-down(zip: fszipper, t: fstree, name: string): pure (fszipper, fstree)
+  match t
+    Dir(n, c) -> (DirZ(zip, n, c), Dir(name, []))
+    _         -> throw("Can't go into a File as if it was a Dir.")
 
 type term
   Cd(mvt: maybe<string>)
@@ -69,23 +88,22 @@ fun add-child(par: fstree, c: fstree): pure fstree
     Dir(n, cn) -> Dir(n, Cons(c, cn))
     _          -> throw("You can't make a file a parent!")
 
-fun bfst(terms: list<term>, acc: fstree): io (fstree, list<term>)
+fun bfstz(terms: list<term>, cd: fstree, zip: fszipper): pure (fstree, list<term>)
   match terms
-    Nil -> (acc, Nil)
+    Nil         -> (zip.fs-top(cd), Nil)
     Cons(t, ts) ->
       match t
         Cd(mvt)           -> match mvt
-          Just(x) -> match acc
-            Dir(_, _) -> match ts.bfst(Dir(x, []))
-              (dir, ts_) -> ts_.bfst(acc.add-child(dir))
-            _         -> throw("How are you cd-ing into a file?")
-          Nothing -> (acc, ts)
-        Ls                -> ts.bfst(acc)
-        DirT(_)           -> ts.bfst(acc)
-        FileT(size, name) -> ts.bfst(acc.add-child(File(name, size)))
+          Just(x) -> match zip.fs-down(cd, x)
+            (z_, cd_) -> ts.bfstz(cd_, z_)
+          Nothing -> match zip.fs-up(cd)
+            (z_, cd_) -> ts.bfstz(cd_, z_)
+        Ls                -> ts.bfstz(cd, zip)
+        DirT(_)           -> ts.bfstz(cd, zip)
+        FileT(size, name) -> ts.bfstz(cd.add-child(File(name, size)), zip)
 
-fun build-fstree(terms: list<term>): io fstree
-  terms.tail.bfst(Dir("/", [])).fst
+fun build-fstree-zipper(terms: list<term>): pure fstree
+  terms.tail.bfstz(Dir("/", []), Done).fst
 
 fun fs-find-matching(t: fstree, pred: fstree -> e bool): e list<fstree>
   val pref = if t.pred then [t] else []
@@ -107,7 +125,7 @@ pub fun day7(part: int): io ()
   with ord-int
   match part
     1 -> get-terminal()
-      .build-fstree()
+      .build-fstree-zipper()
       .fs-find-matching(fn (t) {
         val c = dir-cmp(t, cmp, 100000).default(Gt)
         c.is-lt || c.is-eq
@@ -119,7 +137,7 @@ pub fun day7(part: int): io ()
       // Prelims.
       val total-space = 70000000
       val min-unused = 30000000
-      val fs = get-terminal().build-fstree()
+      val fs = get-terminal().build-fstree-zipper()
 
       // Calculations.
       val current-unused = total-space - fs.size
