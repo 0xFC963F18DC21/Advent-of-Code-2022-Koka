@@ -8,17 +8,17 @@ import misc
 pub effect ord<a>
   fun cmp(l: a, r: a): order
 
-pub fun (<)(l: a, r: a): ord<a> bool
+pub fun (~<)(l: a, r: a): ord<a> bool
   l.cmp(r).is-lt
 
-pub fun (>)(l: a, r: a): ord<a> bool
+pub fun (>~)(l: a, r: a): ord<a> bool
   l.cmp(r).is-gt
 
-pub fun (<=)(l: a, r: a): ord<a> bool
-  !(l > r)
+pub fun (~<=)(l: a, r: a): ord<a> bool
+  !(l >~ r)
 
-pub fun (>=)(l: a, r: a): ord<a> bool
-  !(l < r)
+pub fun (>=~)(l: a, r: a): ord<a> bool
+  !(l ~< r)
 
 // Some implementations of ordered types:
 pub fun ord-int(action)

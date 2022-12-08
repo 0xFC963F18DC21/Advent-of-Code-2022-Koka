@@ -78,3 +78,9 @@ pub fun compare(l: float64, r: float64): order
   if   l < r then Lt
   elif l > r then Gt
   else            Eq
+
+// Inclusive integer range with step.
+pub fun incl-range(start: int, end: int, step: int = 1): div list<int>
+  if   (step > 0) && (start <= end) then Cons(start, incl-range(start + step, end, step))
+  elif (step < 0) && (start >= end) then Cons(start, incl-range(start + step, end, step))
+  else Nil
