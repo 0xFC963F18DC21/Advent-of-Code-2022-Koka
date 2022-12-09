@@ -5,7 +5,6 @@ import std/text/parse
 import utils/input
 import utils/map
 import utils/misc
-import utils/ord
 
 fun split-input(inp: list<string>): pure (list<string>, list<string>)
   inp.split-at-first fn (s) { s == "" }
