@@ -62,16 +62,16 @@ fun visible(grid: map<(int, int), int>, width: int, height: int, at: (int, int))
       then vis := True
       else
         // -Y vis check.
-        vis := (vis || incl-range(sy - 1, 0, -1).map(fn (y) (sx, y)).map(fn (c) grid.get-raw(c)).all(fn (h) h < stree))
+        vis := (vis || incl-range(sy - 1, 0, -1).all(fn (y) grid.get-raw((sx, y)) < stree))
 
         // -X vis check.
-        vis := (vis || incl-range(sx - 1, 0, -1).map(fn (x) (x, sy)).map(fn (c) grid.get-raw(c)).all(fn (h) h < stree))
+        vis := (vis || incl-range(sx - 1, 0, -1).all(fn (x) grid.get-raw((x, sy)) < stree))
 
         // +Y vis check.
-        vis := (vis || incl-range(sy + 1, height - 1, 1).map(fn (y) (sx, y)).map(fn (c) grid.get-raw(c)).all(fn (h) h < stree))
+        vis := (vis || incl-range(sy + 1, height - 1, 1).all(fn (y) grid.get-raw((sx, y)) < stree))
 
         // +X vis check.
-        vis := (vis || incl-range(sx + 1, width - 1, 1).map(fn (x) (x, sy)).map(fn (c) grid.get-raw(c)).all(fn (h) h < stree))
+        vis := (vis || incl-range(sx + 1, width - 1, 1).all(fn (x) grid.get-raw((x, sy)) < stree))
 
   vis
 
