@@ -80,3 +80,13 @@ pub fun alter(
   alter-fn: maybe<v> -> <pure, ord<k> | e> maybe<v>
 ): <pure, ord<k> | e> map<k, v>
   alter(map, key, cmp, alter-fn)
+
+fun from-just(m: maybe<a>): pure a
+  match m
+    Nothing -> throw("This is a nothing!")
+    Just(x) -> x
+
+// Gets all the key-value pairs in the map.
+pub fun assocs(map: map<k, v>): pure list<(k, v)>
+  map.fold(Nil) fn (k, v, acc)
+    Cons((k, v.from-just), acc)
