@@ -91,7 +91,7 @@ module iterative
  */
 
 // Effectful iterative looping.
-effect iterative
+pub effect iterative
   ctl break(): ()
 
   ctl continue(): ()
@@ -157,7 +157,7 @@ pub fun loop(body: () -> <pure, iterative | e> a): <pure | e> a
   body()
 
 // Labelled effectful iterative looping.
-effect label-iterative
+pub effect label-iterative
   ctl label-break(to-label: string): ()
 
   ctl label-continue(to-label: string): ()

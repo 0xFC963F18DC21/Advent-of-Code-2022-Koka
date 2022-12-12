@@ -84,3 +84,12 @@ pub fun incl-range(start: int, end: int, step: int = 1): div list<int>
   if   (step > 0) && (start <= end) then Cons(start, incl-range(start + step, end, step))
   elif (step < 0) && (start >= end) then Cons(start, incl-range(start + step, end, step))
   else Nil
+
+// List removal funcs.
+pub fun remove-e(xxs: list<a>, pred: a -> <div | e> bool, stop: bool = False): <div | e> list<a>
+  match xxs
+    Nil         -> Nil
+    Cons(x, xs) ->
+      if x.pred
+      then if stop then xs else xs.remove-e(pred, stop)
+      else Cons(x, xs.remove-e(pred, stop))
