@@ -102,3 +102,9 @@ pub fun find-e(xxs: list<a>, pred: a -> e bool): e maybe<a>
 // Gets the sign of a number as a number.
 pub fun signum(i: int): int
   i / abs(i)
+
+// Get the cartesian product of two lists.
+pub fun (*)(xs: list<a>, ys: list<b>): div list<(a, b)>
+  with x <- xs.flatmap
+  with y <- ys.map
+  (x, y)

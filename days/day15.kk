@@ -63,6 +63,10 @@ fun merge-ranges(ranges: list<(int, int)>): pure list<(int, int)>
 
   sorted-ranges.merge(Nil)
 
+fun range-size(range: (int, int), excludes: list<int> = Nil): int
+  match range
+    (s, e) -> (e - s) + 1 - excludes.count(fn (x) (x >= s) && (x <= e))
+
 // For finding the beacon sending the distress signal, we'll use an algorithm where we
 // attempt to solve this statement:
 //
@@ -83,10 +87,45 @@ fun merge-ranges(ranges: list<(int, int)>): pure list<(int, int)>
 // Which doesn't really shrink our search space by much.
 //
 // It'd be nice to implement this some day.
+//
+// For now we'll use this intersection-based algorithm instead.
 
-fun range-size(range: (int, int), excludes: list<int> = Nil): int
-  match range
-    (s, e) -> (e - s) + 1 - excludes.count(fn (x) (x >= s) && (x <= e))
+alias line-segment = ((int, int), (int, int))
+
+fun get-border(sen: sensor): list<line-segment>
+  match sen
+    Sensor((sx, sy), _, exc) ->
+      [ ((sx, sy - exc - 1), (sx + exc, sy - 1))
+      , ((sx + exc + 1, sy), (sx + 1, sy + exc))
+      , ((sx, sy + exc + 1), (sx - exc, sy + 1))
+      , ((sx - exc - 1, sy), (sx - 1, sy + exc))
+      ]
+
+fun intersect(s: line-segment, e: line-segment): maybe<(int, int)>
+  val lpS = match s
+    ((x1, y1), (x2, y2)) ->
+      val a = y2 - y1
+      val b = x1 - x2
+      val c = (a * x1) + (b * y1)
+      (a, b, c)
+
+  val lpE = match e
+    ((x1, y1), (x2, y2)) ->
+      val a = y2 - y1
+      val b = x1 - x2
+      val c = (a * x1) + (b * y1)
+      (a, b, c)
+  
+  match (lpS, lpE)
+    ((a1, b1, c1), (a2, b2, c2)) ->
+      val det = (a1 * b2) - (a2 * b1)
+      
+      if   det == 0
+      then Nothing
+      else
+        val ix = ((b2 * c1) - (b1 * c2)) / det
+        val iy = ((a1 * c2) - (a2 * c1)) / det
+        Just((ix, iy))
 
 pub fun day15(part: int): io ()
   val sensor-objects = get-input-lines(15).flatmap(fn (line) {
@@ -127,21 +166,22 @@ pub fun day15(part: int): io ()
         .foldl(0, fn (acc, r) { acc + r.range-size(blocked) })
         .println
     2 ->
-      // TODO: Optimise this.
-      with loop
+      val borders       = sensor-objects.flatmap(get-border)
+      val intersections = (borders * borders).filter-map(fn (b) {
+          match intersect(b.fst, b.snd)
+            Just((x, y)) ->
+              if (x < search-params.fst) || (x > search-params.snd) || (y < search-params.fst) || (y > search-params.snd)
+              then Nothing
+              else Just((x, y))
+            Nothing      -> Nothing
+        })
 
-      var y := 0
-      ifor { y := search-params.fst } { y <= search-params.snd } { y := y + 1 } {
-        val ranges = sensor-objects
-          .filter-map(fn (s) s.excludes-on-row(y))
-          .merge-ranges
-        
-        match ranges
-          Cons((s2, _), Cons((_, e1), Nil)) ->
-            val x = (e1 + s2) / 2
-            ((x * search-params.snd) + y).println
-            break()
-          _                                   ->
-            ()
-      }
+      match intersections.find(fn (p) {
+        match p
+          (x, y) -> sensor-objects.all(fn (s) {
+            s.location.manhattan((x, y)) > s.exclusion-radius
+          })
+      })
+        Nothing      -> "I found nothing...".println
+        Just((x, y)) -> ((x * search-params.snd) + y).println
     _ -> "Invalid part!".println
