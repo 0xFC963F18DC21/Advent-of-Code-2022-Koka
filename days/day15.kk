@@ -4,7 +4,6 @@ import std/text/parse
 
 import utils/avl
 import utils/input
-import utils/iterative
 import utils/misc
 import utils/ord
 import utils/ordlist
@@ -167,6 +166,7 @@ pub fun day15(part: int): io ()
         .println
     2 ->
       val borders       = sensor-objects.flatmap(get-border)
+
       val intersections = (borders * borders).filter-map(fn (b) {
           match intersect(b.fst, b.snd)
             Just((x, y)) ->
@@ -176,7 +176,14 @@ pub fun day15(part: int): io ()
             Nothing      -> Nothing
         })
 
-      match intersections.find(fn (p) {
+      val corners =
+        [ (search-params.fst, search-params.fst)
+        , (search-params.fst, search-params.snd)
+        , (search-params.snd, search-params.fst)
+        , (search-params.snd, search-params.snd)
+        ]
+
+      match (intersections ++ corners).find(fn (p) {
         match p
           (x, y) -> sensor-objects.all(fn (s) {
             s.location.manhattan((x, y)) > s.exclusion-radius
