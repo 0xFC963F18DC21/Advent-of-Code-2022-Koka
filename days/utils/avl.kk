@@ -112,3 +112,16 @@ pub fun get-any(t: avltree<a, b>): maybe<(a, b)>
   match t
     HTip                 -> Nothing
     HNode(_, _, k, v, _) -> Just((k, v))
+
+pub fun avl-find(t: avltree<a, b>, pred: (a, b) -> e bool): e maybe<(a, b)>
+  match t
+    HTip                 ->
+      Nothing
+    HNode(_, l, k, v, r) ->
+      if   pred(k, v)
+      then Just((k, v))
+      else
+        val lr = l.avl-find(pred)
+        if   lr.is-just
+        then lr
+        else r.avl-find(pred)

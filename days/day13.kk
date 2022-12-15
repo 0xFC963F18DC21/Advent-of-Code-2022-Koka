@@ -13,11 +13,6 @@ type nested<a>
 
 alias packet = nested<int>
 
-fun show-nested(xs: nested<a>, show: a -> <div | e> string): <div | e> string
-  match xs
-    Flat(x)     -> x.show
-    Nested(xs_) -> xs_.show-list(fn (x) x.show-nested(show))
-
 fun parse-packet(): <div, parse> packet
   fun pflat()
     Flat(pint())
