@@ -183,7 +183,7 @@ fun label-for-internal(
 // An iterative-style while-loop with labels.
 // WARNING: Although the condition action has the "label-iterative" effect, do not call
 //          label-break or label-continue in it, as it may cause some oddities to occur.
-fun label-while(
+pub fun label-while(
   label: string,
   cond: () -> <pure, label-iterative | e> bool,
   action: () -> <pure, label-iterative | e> ()
@@ -206,7 +206,7 @@ fun label-while(
 // An iterative-style for-loop with labels.
 // WARNING: Although the pre, condition and post actions have the "label-iterative" effect,
 //          do not call label-break or label-continue in it, as it may cause some oddities to occur.
-fun label-for(
+pub fun label-for(
   label: string,
   pre: () -> <pure, label-iterative | e> (),
   cond: () -> <pure, label-iterative | e> bool,

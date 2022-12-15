@@ -93,3 +93,12 @@ pub fun remove-e(xxs: list<a>, pred: a -> <div | e> bool, stop: bool = False): <
       if x.pred
       then if stop then xs else xs.remove-e(pred, stop)
       else Cons(x, xs.remove-e(pred, stop))
+
+pub fun find-e(xxs: list<a>, pred: a -> e bool): e maybe<a>
+  match xxs
+    Nil         -> Nothing
+    Cons(x, xs) -> if x.pred then Just(x) else xs.find-e(pred)
+
+// Gets the sign of a number as a number.
+pub fun signum(i: int): int
+  i / abs(i)

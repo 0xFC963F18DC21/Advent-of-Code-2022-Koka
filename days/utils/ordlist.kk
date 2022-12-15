@@ -14,7 +14,7 @@ pub fun qsort(xxs: list<a>): <div, ord<a>> list<a>
     Cons(x, Nil) -> Cons(x, Nil)
     Cons(x, xs)  ->
       match xs.partition(fn (y) { y ~< x })
-        (lts, gts) -> lts.qsort ++ [x] ++ gts.qsort
+        (lts, gts) -> lts.qsort ++ Cons(x, gts.qsort)
 
 // Min and Max functions.
 pub fun minimum-by(xxs: list<a>): <pure, ord<a>> a
